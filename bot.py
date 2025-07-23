@@ -22,35 +22,24 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    print(f"--- Incoming message detected ---")
-    print(f"Author: {message.author} | Author ID: {message.author.id}")
-    print(f"Content: {message.content}")
-    print(f"Webhook ID: {message.webhook_id}")
-    print(f"Has embeds: {bool(message.embeds)}")
-
     if message.webhook_id and message.embeds:
         embed = message.embeds[0]
         title = embed.title or ""
         description = embed.description or ""
+        author_name = embed.author.name if embed.author else ""
 
-        print(f"Embed title: {title}")
-        print(f"Embed description: {description}")
-
-        combined_content = (title + " " + description).lower()
+        combined_content = f"{title} {description} {author_name}".lower()
         target = TARGET_USER.lower()
-
-        print(f"Looking for '{target}' in '{combined_content}'")
 
         if target in combined_content:
             try:
                 await message.delete()
-                print(f"✅ Deleted webhook message containing '{TARGET_USER}'")
             except discord.Forbidden:
-                print("❌ Missing permissions to delete message.")
-            except discord.HTTPException as e:
-                print(f"❌ Failed to delete message: {e}")
-        else:
-            print("❌ Target string not found in message embeds.")
+                pass  # Bot lacks permission to delete the message
+            except discord.HTTPException:
+                pass  # Deletion failed for some other reason
+
+    await bot.process_commands(message)
 
 if __name__ == "__main__":
     token = os.getenv("DISCORD_TOKEN")
