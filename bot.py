@@ -7,7 +7,7 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-TARGET_USER = "mcslongdong"
+TARGET_USER = "PseudoBtw"
 
 @bot.event
 async def on_ready():
